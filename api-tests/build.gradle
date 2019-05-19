@@ -1,0 +1,70 @@
+
+sourceCompatibility = 1.8
+
+ext {
+    allure_rest_ssured_version = "2.7.0"
+    google_gson_version = "2.8.5"
+    gsonfire_version = "1.8.3"
+    junit_version = "5.4.2"
+    jackson_databind_version = "2.9.5"
+    java_faker_version = "0.16"
+    logback_version = "1.2.3"
+    rest_assured_version = "3.1.1"
+    slf4j_version = "1.7.25"
+    okio_version = "1.13.0"
+    threetenbp_version = "1.3.7"
+    
+}
+
+dependencies {
+
+    compile (
+            "ch.qos.logback:logback-core:$logback_version",
+            "ch.qos.logback:logback-classic:$logback_version",
+            "com.github.javafaker:javafaker:$java_faker_version",
+            "org.slf4j:slf4j-api:$slf4j_version",
+            "com.fasterxml.jackson.core:jackson-databind:$jackson_databind_version",
+            "io.rest-assured:rest-assured:$rest_assured_version",
+            "io.qameta.allure:allure-rest-assured:$allure_rest_ssured_version",
+            "com.google.code.gson:gson:$google_gson_version",
+            "io.gsonfire:gson-fire:$gsonfire_version",
+            "org.junit.jupiter:junit-jupiter-api:$junit_version",
+            "org.junit.jupiter:junit-jupiter-engine:$junit_version",
+            "com.squareup.okio:okio:$okio_version",
+            "org.threeten:threetenbp:$threetenbp_version")
+
+}
+
+allure {
+    version = '2.5.0'
+    aspectjweaver = true
+    configuration = 'compile'
+
+    useJUnit5 {
+        version = '2.7.0'
+    }
+}
+
+test {
+    useJUnitPlatform()
+
+    beforeTest { descriptor ->
+            logger.lifecycle("Running: " + descriptor)
+    }
+    
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+    
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} tests, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed, " +
+                    "${result.skippedTestCount} skipped"
+        }
+    }
+}
